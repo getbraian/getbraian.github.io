@@ -1,11 +1,5 @@
 [
   {
-    "image": "desktop-board.jpg",
-    "name": "Kanban",
-    "title": "See the plan. Open the full story.",
-    "description": "Move notes through your workflow, with their context one click away."
-  },
-  {
     "image": "files.jpg",
     "name": "File manager",
     "title": "Your vault is a folder.",
@@ -18,10 +12,34 @@
     "description": "Bring up commands for the next block without leaving your note."
   },
   {
-    "image": "spaces.jpg",
+    "image": "ide-preview.jpg",
+    "name": "IDE",
+    "title": "Keep the source beside the result.",
+    "description": "Edit HTML and CSS in split panes, with the rendered page underneath."
+  },
+  {
+    "image": "spaces-split.jpg",
     "name": "Spaces",
     "title": "Bring related work together.",
-    "description": "A document tree, tabs and split panes for the notes and views you use together."
+    "description": "Keep a tree of related material beside two notes, tabs and split panes."
+  },
+  {
+    "image": "spotlight.jpg",
+    "name": "Spotlight",
+    "title": "Find your next move.",
+    "description": "Jump to notes, commands and views from one keyboard-driven search."
+  },
+  {
+    "image": "topology.jpg",
+    "name": "Topology",
+    "title": "Give your notes a shared language.",
+    "description": "Design note types, properties and connections in a visual schema editor."
+  },
+  {
+    "image": "desktop-board.jpg",
+    "name": "Kanban",
+    "title": "See the plan. Open the full story.",
+    "description": "Move notes through your workflow, with their context one click away."
   },
   {
     "image": "calendar.jpg",
@@ -30,16 +48,10 @@
     "description": "See dated notes and external iCal feeds alongside your daily context."
   },
   {
-    "image": "journal.jpg",
-    "name": "Journal",
-    "title": "Make a little room to reflect.",
-    "description": "A dedicated writing view, entry history and a year of activity. This vault is ready for its first entry."
-  },
-  {
-    "image": "rss.jpg",
-    "name": "RSS",
-    "title": "Keep what matters.",
-    "description": "Follow feeds and supported newsletters, read articles, and keep tags, stars and reactions."
+    "image": "discovery.jpg",
+    "name": "Discovery",
+    "title": "Give your notes another dimension.",
+    "description": "Explore nested rows alongside typed properties, filters and sorting."
   },
   {
     "image": "graph.jpg",
@@ -48,10 +60,16 @@
     "description": "Explore the links between notes, people, projects and tasks in your vault."
   },
   {
-    "image": "discovery.jpg",
-    "name": "Discovery",
-    "title": "Give your notes another dimension.",
-    "description": "Explore nested rows alongside typed properties, filters and sorting."
+    "image": "rss.jpg",
+    "name": "RSS",
+    "title": "Keep what matters.",
+    "description": "Follow feeds and supported newsletters, read articles, and keep tags, stars and reactions."
+  },
+  {
+    "image": "journal.jpg",
+    "name": "Journal",
+    "title": "Make a little room to reflect.",
+    "description": "A dedicated writing view, entry history and a year of activity. This vault is ready for its first entry."
   },
   {
     "image": "chat.jpg",
@@ -70,6 +88,12 @@
     "name": "Sharing",
     "title": "Share the right context.",
     "description": "Choose read, write or dictation access, set an expiry, and revoke a link when you\u2019re done."
+  },
+  {
+    "image": "feature-settings.jpg",
+    "name": "Settings",
+    "title": "Use the parts that help you.",
+    "description": "Enable optional features and configure the workspace separately for each vault."
   },
   {
     "image": "encrypted-note.jpg",
