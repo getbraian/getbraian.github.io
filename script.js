@@ -35,13 +35,15 @@ document.querySelectorAll('[data-copy]').forEach(button => button.addEventListen
   clearTimeout(statusTimeout);
   statusTimeout = setTimeout(() => { status.classList.remove('visible'); button.textContent = 'Copy'; }, 3000);
 }));
-const carousel = document.querySelector('.feature-carousel');
-if (carousel) {
+document.querySelectorAll('.feature-carousel').forEach(carousel => {
   const track = carousel.querySelector('.carousel-viewport');
   const slides = [...carousel.querySelectorAll('.carousel-slide')];
   const selectors = [...carousel.querySelectorAll('[data-slide]')];
   const playButton = carousel.querySelector('.carousel-play');
-  const announcement = document.getElementById('carousel-status');
+  const counter = document.createElement('span');
+  counter.className = 'carousel-count';
+  carousel.querySelector('.carousel-controls').append(counter);
+  const announcement = carousel.querySelector('[data-carousel-status]');
   let active = 0;
   let automatic = !reducedMotion.matches;
   let visible = false;
@@ -50,6 +52,7 @@ if (carousel) {
   let scrollFrame;
   function updateSelection(index) {
     active = index;
+    counter.textContent = `${index + 1} / ${slides.length}`;
     selectors.forEach((button, i) => button.setAttribute('aria-current', String(i === index)));
   }
   function schedule() {
@@ -62,6 +65,8 @@ if (carousel) {
   function show(index, manual = false) {
     const previous = active;
     updateSelection(index);
+    const strip = selectors[index].parentElement;
+    strip.scrollTo({left: selectors[index].offsetLeft - strip.offsetLeft - strip.clientWidth / 2 + selectors[index].offsetWidth / 2, behavior:"instant"});
     track.scrollTo({left: index * track.clientWidth, behavior: reducedMotion.matches || Math.abs(previous - index) > 1 ? 'instant' : 'smooth'});
     if (manual) {
       automatic = false;
@@ -91,5 +96,23 @@ if (carousel) {
   addEventListener('resize', () => track.scrollTo({left:active * track.clientWidth, behavior:'instant'}));
   if ('IntersectionObserver' in window) new IntersectionObserver(entries => { visible = entries[0].isIntersecting; schedule(); }, {threshold:0.25}).observe(carousel);
   carousel.querySelector('.carousel-controls').hidden = false;
+  updateSelection(0);
   schedule();
+});
+
+const film = document.getElementById('feature-video');
+if (film) {
+  let manualPause = false;
+  let inView = false;
+  let programmaticPause = false;
+  function pauseFilm() { if (!film.paused) { programmaticPause = true; film.pause(); } }
+  film.addEventListener('pause', () => { if (!programmaticPause) manualPause = true; programmaticPause = false; });
+  film.addEventListener('play', () => { manualPause = false; });
+  const mayAutoplay = () => !reducedMotion.matches && !navigator.connection?.saveData && !manualPause && !document.hidden;
+  if ('IntersectionObserver' in window) new IntersectionObserver(entries => {
+    inView = entries[0].isIntersecting;
+    if (inView && mayAutoplay()) film.play().catch(() => {}); else if (!inView) pauseFilm();
+  }, {threshold:0.45}).observe(film);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) pauseFilm(); else if (inView && mayAutoplay()) film.play().catch(() => {}); });
+  reducedMotion.addEventListener('change', () => { if (reducedMotion.matches) pauseFilm(); });
 }
