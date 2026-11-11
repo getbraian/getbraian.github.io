@@ -35,37 +35,61 @@ document.querySelectorAll('[data-copy]').forEach(button => button.addEventListen
   clearTimeout(statusTimeout);
   statusTimeout = setTimeout(() => { status.classList.remove('visible'); button.textContent = 'Copy'; }, 3000);
 }));
-// Keep motion optional, stop decoding when the film is offscreen, and respect a
-// person's explicit pause even when they scroll away and return.
-const film = document.getElementById('header-video');
-const filmToggle = document.getElementById('video-toggle');
-if (film && filmToggle) {
-  let userPaused = false;
-  let inView = false;
-  const saveData = navigator.connection?.saveData === true;
-  const syncFilmLabel = () => {
-    filmToggle.textContent = film.paused ? 'Play animation' : 'Pause animation';
-    filmToggle.setAttribute('aria-label', film.paused ? 'Play header animation' : 'Pause header animation');
-  };
-  const stopFilm = () => { film.pause(); syncFilmLabel(); };
-  const playFilm = () => { film.play().then(syncFilmLabel).catch(syncFilmLabel); };
-  filmToggle.hidden = false;
-  film.addEventListener('play', syncFilmLabel);
-  film.addEventListener('pause', syncFilmLabel);
-  filmToggle.addEventListener('click', () => {
-    if (film.paused) { userPaused = false; playFilm(); }
-    else { userPaused = true; stopFilm(); }
-  });
-  if ('IntersectionObserver' in window) {
-    new IntersectionObserver(entries => {
-      inView = entries[0].isIntersecting;
-      if (inView && !userPaused && !reducedMotion.matches && !saveData && !document.hidden) playFilm();
-      else stopFilm();
-    }, {threshold:0.15}).observe(film);
+const carousel = document.querySelector('.feature-carousel');
+if (carousel) {
+  const track = carousel.querySelector('.carousel-viewport');
+  const slides = [...carousel.querySelectorAll('.carousel-slide')];
+  const selectors = [...carousel.querySelectorAll('[data-slide]')];
+  const playButton = carousel.querySelector('.carousel-play');
+  const announcement = document.getElementById('carousel-status');
+  let active = 0;
+  let automatic = !reducedMotion.matches;
+  let visible = false;
+  let hovered = false;
+  let timer;
+  let scrollFrame;
+  function updateSelection(index) {
+    active = index;
+    selectors.forEach((button, i) => button.setAttribute('aria-current', String(i === index)));
   }
-  reducedMotion.addEventListener('change', () => { if (reducedMotion.matches) stopFilm(); });
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) stopFilm();
-    else if (inView && !userPaused && !reducedMotion.matches && !saveData) playFilm();
+  function schedule() {
+    clearTimeout(timer);
+    playButton.textContent = automatic ? 'Pause slideshow' : 'Play slideshow';
+    if (automatic && visible && !hovered && !carousel.contains(document.activeElement) && !document.hidden) {
+      timer = setTimeout(() => { show((active + 1) % slides.length); schedule(); }, 6000);
+    }
+  }
+  function show(index, manual = false) {
+    const previous = active;
+    updateSelection(index);
+    track.scrollTo({left: index * track.clientWidth, behavior: reducedMotion.matches || Math.abs(previous - index) > 1 ? 'instant' : 'smooth'});
+    if (manual) {
+      automatic = false;
+      announcement.textContent = `${slides[index].dataset.name}, feature ${index + 1} of ${slides.length}`;
+      schedule();
+    }
+  }
+  selectors.forEach((button, index) => button.addEventListener('click', () => show(index, true)));
+  carousel.querySelectorAll('[data-direction]').forEach(button => button.addEventListener('click', () => show((active + Number(button.dataset.direction) + slides.length) % slides.length, true)));
+  track.addEventListener('keydown', event => {
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+    event.preventDefault();
+    show((active + (event.key === 'ArrowRight' ? 1 : -1) + slides.length) % slides.length, true);
   });
+  track.addEventListener('pointerdown', () => { automatic = false; schedule(); });
+  track.addEventListener('scroll', () => {
+    cancelAnimationFrame(scrollFrame);
+    scrollFrame = requestAnimationFrame(() => updateSelection(Math.max(0, Math.min(slides.length - 1, Math.round(track.scrollLeft / track.clientWidth)))));
+  }, {passive:true});
+  playButton.addEventListener('click', () => { automatic = !automatic; schedule(); });
+  carousel.addEventListener('mouseenter', () => { hovered = true; schedule(); });
+  carousel.addEventListener('mouseleave', () => { hovered = false; schedule(); });
+  carousel.addEventListener('focusin', schedule);
+  carousel.addEventListener('focusout', () => requestAnimationFrame(schedule));
+  document.addEventListener('visibilitychange', schedule);
+  reducedMotion.addEventListener('change', () => { automatic = !reducedMotion.matches; schedule(); });
+  addEventListener('resize', () => track.scrollTo({left:active * track.clientWidth, behavior:'instant'}));
+  if ('IntersectionObserver' in window) new IntersectionObserver(entries => { visible = entries[0].isIntersecting; schedule(); }, {threshold:0.25}).observe(carousel);
+  carousel.querySelector('.carousel-controls').hidden = false;
+  schedule();
 }
