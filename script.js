@@ -27,8 +27,12 @@ document.querySelectorAll('[data-copy]').forEach(button => button.addEventListen
   try {
     await navigator.clipboard.writeText(button.dataset.copy);
     button.textContent = 'Copied';
+    const feedback = button.closest('dialog')?.querySelector('[data-copy-feedback]');
+    if (feedback) feedback.textContent = 'Copied. Paste it into your terminal.';
     status.textContent = 'Command copied. Paste it into your terminal.';
   } catch {
+    const feedback = button.closest('dialog')?.querySelector('[data-copy-feedback]');
+    if (feedback) feedback.textContent = 'Select and copy the command above.';
     status.textContent = 'Copy this command: npx braian';
   }
   status.classList.add('visible');
@@ -115,4 +119,31 @@ if (film) {
   }, {threshold:0.45}).observe(film);
   document.addEventListener('visibilitychange', () => { if (document.hidden) pauseFilm(); else if (inView && mayAutoplay()) film.play().catch(() => {}); });
   reducedMotion.addEventListener('change', () => { if (reducedMotion.matches) pauseFilm(); });
+}
+
+const localTrial = document.getElementById('local-trial');
+if (localTrial?.showModal) {
+  document.querySelectorAll('[data-local-trial]').forEach(trigger => trigger.addEventListener('click', event => {
+    event.preventDefault();
+    localTrial.querySelector('[data-copy-feedback]').textContent = '';
+    localTrial.showModal();
+    document.body.classList.add('dialog-open');
+  }));
+  localTrial.addEventListener('close', () => document.body.classList.remove('dialog-open'));
+  localTrial.addEventListener('keydown', event => {
+    if (event.key !== 'Tab') return;
+    const controls = [...localTrial.querySelectorAll('a[href], button:not([disabled])')];
+    const first = controls[0];
+    const last = controls.at(-1);
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault(); last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault(); first.focus();
+    }
+  });
+  localTrial.addEventListener('click', event => {
+    if (event.target !== localTrial) return;
+    const box = localTrial.getBoundingClientRect();
+    if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) localTrial.close();
+  });
 }
