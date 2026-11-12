@@ -87,4 +87,4 @@ Core Obsidian notes work without conversion; plugins/themes are not executed, an
 
 ## Where to edit
 
-`index.html` implements the story. `data/screenshots.json` defines the feature tour. `theme-*.html` and `motion/` keep the graphics editable. The Codespaces trial lives in `getbraian/braian` under `.devcontainer/`, with `demo-vault/` and `TRY.md`; it installs the published npm app, not application source.
+`index.html` implements the story. `data/screenshots.json` defines the feature tour. `theme-*.html` and `motion/` keep the graphics editable. The Codespaces trial lives in `getbraian/braian-demo` under `.devcontainer/`, with `demo-vault/` and `TRY.md`; it installs the published npm app, not application source.

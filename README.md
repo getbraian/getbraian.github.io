@@ -1,6 +1,6 @@
 # BrAIan website
 
-The public landing page for [BrAIan](https://getbraian.github.io), a local-first personal knowledge workspace. Introduction and CLI guide: [getbraian/braian](https://github.com/getbraian/braian). Application source will be added as soon as possible.
+The public landing page for [BrAIan](https://getbraian.github.io), a local-first personal knowledge workspace. Introduction and CLI guide: [getbraian/braian-demo](https://github.com/getbraian/braian-demo). Application source will be added as soon as possible.
 
 ## Preview and publishing
 
@@ -38,6 +38,6 @@ The web delivery is `assets/detail-film.mp4`; the poster is `assets/detail-poste
 
 MIT © 2026 Marco Pegoraro.
 
-The prepared Codespaces trial lives in [getbraian/braian](https://github.com/getbraian/braian/tree/main/.devcontainer), with a Files-only starter vault. The landing page links to its creation screen; it does not create or bill a Codespace automatically.
+The prepared Codespaces trial lives in [getbraian/braian-demo](https://github.com/getbraian/braian-demo/tree/main/.devcontainer), with a Files-only starter vault. The landing page links to its creation screen; it does not create or bill a Codespace automatically.
 
 The top local-trial action opens a keyboard-accessible popup with Node requirements, `npx braian`, copy feedback and brief startup/stop instructions. Escape, the close button or the backdrop dismiss it and return focus to the trigger. Codespaces trial links open in a new tab.
