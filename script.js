@@ -171,6 +171,7 @@ if (localTrial?.showModal) {
 
 
 // Follow the chapter crossing the reading line just below the sticky menu.
+const siteHeader = document.querySelector('.site-header');
 const chapterNav = document.querySelector('.chapter-nav');
 if (chapterNav) {
   const chapters = [...chapterNav.querySelectorAll('a[href^="#"]')]
@@ -180,7 +181,8 @@ if (chapterNav) {
   let currentLink = null;
   function updateChapter() {
     framePending = false;
-    const readingLine = chapterNav.getBoundingClientRect().height + 24;
+    siteHeader.classList.toggle('is-compact', scrollY > 24);
+    const readingLine = Math.max(siteHeader.getBoundingClientRect().height + 24, parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) + 1);
     let current = null;
     for (const chapter of chapters) {
       if (chapter.section.getBoundingClientRect().top <= readingLine) current = chapter.link;
@@ -195,7 +197,7 @@ if (chapterNav) {
       const linkBox = current.getBoundingClientRect();
       const navBox = chapterNav.getBoundingClientRect();
       if (linkBox.left < navBox.left || linkBox.right > navBox.right) {
-        chapterNav.scrollTo({left: current.offsetLeft - (chapterNav.clientWidth - current.offsetWidth) / 2, behavior: 'instant'});
+        chapterNav.scrollTo({left: chapterNav.scrollLeft + linkBox.left - navBox.left - (chapterNav.clientWidth - current.offsetWidth) / 2, behavior: 'instant'});
       }
     }
   }
