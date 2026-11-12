@@ -147,3 +147,45 @@ if (localTrial?.showModal) {
     if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) localTrial.close();
   });
 }
+
+
+// Follow the chapter crossing the reading line just below the sticky menu.
+const chapterNav = document.querySelector('.chapter-nav');
+if (chapterNav) {
+  const chapters = [...chapterNav.querySelectorAll('a[href^="#"]')]
+    .map(link => ({link, section: document.querySelector(link.getAttribute('href'))}))
+    .filter(chapter => chapter.section);
+  let framePending = false;
+  let currentLink = null;
+  function updateChapter() {
+    framePending = false;
+    const readingLine = chapterNav.getBoundingClientRect().height + 24;
+    let current = null;
+    for (const chapter of chapters) {
+      if (chapter.section.getBoundingClientRect().top <= readingLine) current = chapter.link;
+    }
+    if (current === currentLink) return;
+    currentLink = current;
+    for (const {link} of chapters) {
+      if (link === current) link.setAttribute('aria-current', 'location');
+      else link.removeAttribute('aria-current');
+    }
+    if (current) {
+      const linkBox = current.getBoundingClientRect();
+      const navBox = chapterNav.getBoundingClientRect();
+      if (linkBox.left < navBox.left || linkBox.right > navBox.right) {
+        chapterNav.scrollTo({left: current.offsetLeft - (chapterNav.clientWidth - current.offsetWidth) / 2, behavior: 'instant'});
+      }
+    }
+  }
+  function scheduleChapter() {
+    if (framePending) return;
+    framePending = true;
+    requestAnimationFrame(updateChapter);
+  }
+  addEventListener('scroll', scheduleChapter, {passive: true});
+  addEventListener('resize', scheduleChapter);
+  addEventListener('pageshow', scheduleChapter);
+  addEventListener('load', scheduleChapter);
+  updateChapter();
+}

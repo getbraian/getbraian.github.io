@@ -41,3 +41,6 @@ body.dialog-open{overflow:hidden}.local-trial{width:min(540px,calc(100% - 32px))
 
 /* Section navigation stays within reach after the introduction. */
 html{scroll-padding-top:76px}.chapter-nav{position:sticky;top:0;z-index:40;width:100%;max-width:none;margin-inline:0;padding:6px 24px;flex-wrap:nowrap;gap:24px;background:var(--bg);box-shadow:0 8px 24px #0002;overflow-x:auto;scrollbar-width:thin}.chapter-nav a{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;min-height:44px;padding:4px 2px;white-space:nowrap;border-radius:6px}.chapter-nav a:focus-visible{outline-offset:0}#write,#find,#structure,#perspectives,#assistant,#share,#start{scroll-margin-top:0}@media(max-width:680px){.chapter-nav{justify-content:flex-start;gap:18px;padding-inline:16px;overscroll-behavior-x:contain}.chapter-nav a{font-size:11px}}
+
+/* The current chapter is visible without relying on colour alone. */
+.chapter-nav>a:first-child{display:inline-flex}.chapter-nav a[aria-current="location"]{color:var(--ink);background:#91afff16;box-shadow:inset 0 -2px #91afff}.chapter-nav a{padding-inline:6px}@media(max-width:680px){.chapter-nav{gap:10px;padding-inline:12px}.chapter-nav a{padding-inline:4px}}
