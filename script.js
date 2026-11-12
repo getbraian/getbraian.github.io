@@ -26,7 +26,8 @@ let statusTimeout;
 document.querySelectorAll('[data-copy]').forEach(button => button.addEventListener('click', async () => {
   try {
     await navigator.clipboard.writeText(button.dataset.copy);
-    button.textContent = 'Copied';
+    if (button.hasAttribute('data-copy-icon')) button.title = 'Copied';
+    else button.textContent = 'Copied';
     const feedback = button.closest('dialog')?.querySelector('[data-copy-feedback]');
     if (feedback) feedback.textContent = 'Copied. Paste it into your terminal.';
     status.textContent = 'Command copied. Paste it into your terminal.';
@@ -37,7 +38,7 @@ document.querySelectorAll('[data-copy]').forEach(button => button.addEventListen
   }
   status.classList.add('visible');
   clearTimeout(statusTimeout);
-  statusTimeout = setTimeout(() => { status.classList.remove('visible'); button.textContent = 'Copy'; }, 3000);
+  statusTimeout = setTimeout(() => { status.classList.remove('visible'); if (button.hasAttribute('data-copy-icon')) button.title = 'Copy command'; else button.textContent = 'Copy'; }, 3000);
 }));
 document.querySelectorAll('.feature-carousel').forEach(carousel => {
   const track = carousel.querySelector('.carousel-viewport');
