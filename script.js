@@ -23,23 +23,43 @@ addEventListener('resize', updateScroll);
 updateScroll();
 const status = document.getElementById('copy-status');
 let statusTimeout;
-document.querySelectorAll('[data-copy]').forEach(button => button.addEventListener('click', async () => {
-  try {
-    await navigator.clipboard.writeText(button.dataset.copy);
-    if (button.hasAttribute('data-copy-icon')) button.title = 'Copied';
-    else button.textContent = 'Copied';
-    const feedback = button.closest('dialog')?.querySelector('[data-copy-feedback]');
-    if (feedback) feedback.textContent = 'Copied. Paste it into your terminal.';
-    status.textContent = 'Command copied. Paste it into your terminal.';
-  } catch {
-    const feedback = button.closest('dialog')?.querySelector('[data-copy-feedback]');
-    if (feedback) feedback.textContent = 'Select and copy the command above.';
-    status.textContent = 'Copy this command: npx braian';
-  }
-  status.classList.add('visible');
-  clearTimeout(statusTimeout);
-  statusTimeout = setTimeout(() => { status.classList.remove('visible'); if (button.hasAttribute('data-copy-icon')) button.title = 'Copy command'; else button.textContent = 'Copy'; }, 3000);
-}));
+document.querySelectorAll('[data-copy]').forEach(button => {
+  const originalLabel = button.getAttribute('aria-label');
+  const originalText = button.textContent;
+  const iconOnly = button.hasAttribute('data-copy-icon');
+  let resetTimeout;
+  button.addEventListener('click', async () => {
+    clearTimeout(resetTimeout);
+    button.classList.remove('is-copied');
+    try {
+      await navigator.clipboard.writeText(button.dataset.copy);
+      if (iconOnly) {
+        // Restart the confirmation on repeated clicks too.
+        void button.offsetWidth;
+        button.classList.add('is-copied');
+        button.title = 'Copied';
+        button.setAttribute('aria-label', 'Command copied');
+      } else button.textContent = 'Copied';
+      const feedback = button.closest('dialog')?.querySelector('[data-copy-feedback]');
+      if (feedback) feedback.textContent = 'Copied. Paste it into your terminal.';
+      status.textContent = 'Command copied. Paste it into your terminal.';
+    } catch {
+      const feedback = button.closest('dialog')?.querySelector('[data-copy-feedback]');
+      if (feedback) feedback.textContent = 'Select and copy the command above.';
+      status.textContent = 'Copy this command: npx braian';
+    }
+    status.classList.add('visible');
+    clearTimeout(statusTimeout);
+    statusTimeout = setTimeout(() => status.classList.remove('visible'), 2500);
+    resetTimeout = setTimeout(() => {
+      button.classList.remove('is-copied');
+      if (iconOnly) {
+        button.title = 'Copy command';
+        button.setAttribute('aria-label', originalLabel);
+      } else button.textContent = originalText;
+    }, 2200);
+  });
+});
 document.querySelectorAll('.feature-carousel').forEach(carousel => {
   const track = carousel.querySelector('.carousel-viewport');
   const slides = [...carousel.querySelectorAll('.carousel-slide')];
